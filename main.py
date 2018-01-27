@@ -21,12 +21,11 @@ class Blog(db.Model):
     content = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, subtitle, date, content, owner):
+    def __init__(self, title, subtitle, date, content):
         self.title = title
         self.subtitle = subtitle
         self.date = date
         self.content = content
-        self.owner = owner
 
 
 class User(db.Model):  # database model for users
@@ -36,7 +35,7 @@ class User(db.Model):  # database model for users
     password = db.Column(db.String(120))
     owner_blog = db.relationship('Blog', backref='owner')
 
-    def __init__(self, username, email, password):
+    def __init__(self, username, password):
         self.username = username
         self.password = password
 
@@ -85,14 +84,14 @@ def signup():
         if not (user_name_error or
                 password_error or
                 verify_pass_error or
-                compare_pass_error or
+                compare_pass_error
                 ):
             #Check if user exists in db
             existing_user = User.query.filter_by(username=username).first()
             if not existing_user:  # make a new user if not existing
                 new_user = User(username, password)
                 db.session.add(new_user)
-                db.commit()
+                db.session.commit()
                 session['username'] = username
                 return redirect('newpost')
             else:
@@ -128,15 +127,14 @@ def login():
 
 @app.route('/logout')
 def logout():
-    if request.method == 'POST':
-        return redirect('blog')
+    return redirect('index')
 
 
 @app.route('/singlepost/<int:new_post_id>')
 # #route to show individual post filtered by that particuar post's id
 def current_post(new_post_id):
     new_post = Blog.query.filter_by(id=new_post_id).first_or_404()
-    return render_template('post.html', new_post=new_post)
+    return render_template('singleuser.html', new_post=new_post)
 
 
 @app.route('/blog')
@@ -146,7 +144,7 @@ def all_posts():
     
 
 @app.route('/newpost', methods=['GET', 'POST'])
-def add_post():
+def newpost():
     if request.method == 'POST':
         new_title = request.form['title']
         if not new_title:
@@ -154,22 +152,24 @@ def add_post():
             return render_template('newpost.html', error=error)
 
         new_subtitle = request.form['subtitle']
-        new_author = request.form['author']
         new_content = request.form['content']
         date = datetime.now()
-        new_post = Blog(new_title, new_subtitle, new_author, date, new_content)
+        new_post = Blog(new_title, new_subtitle, date, new_content)
         db.session.add(new_post)
         db.session.commit()
-        return redirect('') #TODO have this direct to the single view page
+        return redirect('index') #TODO have this direct to the single view page
 
-    return render_template('add_post.html')
+    return render_template('newpost.html')
 
 
 
 if __name__ == '__main__':
     app.run()
 
-#TODO drop tables and relink DB to app
-#TODO test app for db functionality 
+ 
+
+
+#TODO Fix logout and test for functionality
 #TODO test for validation 
-#TODO remake git repo and link to local repo
+#TODO add sessioning
+#TODO add flashing

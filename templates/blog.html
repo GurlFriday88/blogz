@@ -4,17 +4,18 @@
 <div>
     {% for article in blog %}
     <div class="post-preview">
-        <a href="{{ url_for('post', new_post_id=article.id ) }}">
-            <h2 class="post-title">
-                {{article.title}}
-            </h2>
-            <h3 class="post-subtitle">
-                {{article.subtitle}}
-            </h3>
+
+        <h2 class="post-title">
+            {{article.title}}
+        </h2>
+        <h3 class="post-subtitle">
+            {{article.subtitle}}
+        </h3>
         </a>
-        <p class="post-meta">Posted by {{article.author}} on {{article.date}}</p>
+        <p class="post-meta">Posted by {{article.username}} on {{article.date}}</p>
     </div>
-    <hr> 
+    <hr>
 </div>
-<hr>
-{% endfor%}
+<hr> 
+    {% endfor%}
+{% endblock %}

@@ -1,12 +1,12 @@
 {% extends "base.html" %}
 {% block content %}
 
-<form name="blog_form" id="blog_form" method="POST" action="/newpost">
+<form method="POST" action="/newpost">
     <div>
         <div>
             <label>Title</label>
             <input type="text" name='title'  placeholder="Title">
-            
+            <span>{{error}}</span>
         </div>
     </div>
     <div>
@@ -16,13 +16,7 @@
             
         </div>
     </div>
-    <div>
-        <div>
-            <label>Author</label>
-            <input type="text" name='author' placeholder="Author">
-            
-        </div>
-    </div>
+    
     <div>
         <div>
             <label>Content</label>
