@@ -1,80 +1,15 @@
-{% extends "boilerplate.html" %} 
+{% extends "base.html" %} 
 {% block content %}
-
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
-      <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}">LC101 Unit 2 Blog</a>
-        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
-          Menu
-          <span class="glyphicons glyphicons-show-lines"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarResponsive">
-          <ul class="navbar-nav ml-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{{ url_for('index') }}">Home</a>
-            </li>
-              <li class="nav-item">
-                <a class="nav-link" href="{{ url_for('add_post') }}">Add Post</a>
-              </li>
-          </ul>
-        </div>
-      </div>
-    </nav>
-
-    <!-- Page Header -->
-    <header class="masthead" style="background-image: url('{{ url_for('static', filename='typewriter.jpg') }}')">
-      <div class="overlay"></div>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            <div class="site-heading">
-              <h1> A Blog about stuff.</h1>
-              <span class="subheading"> This is how you do it: you sit down at the keyboard and you put one word after another until its done. It's that easy, and that hard.<br><q>Neil Gaiman</q></span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Main Content -->
-    <div class="container">
-      <div class="row">
-        <div class="col-lg-8 col-md-10 mx-auto">
-        {% for article in current_posts %}
-          <div class="post-preview">
-            <a href="{{ url_for('post', new_post_id=article.id ) }}">
-              <h2 class="post-title">
-                {{article.title}}
-              </h2>
-              <h3 class="post-subtitle">
-                {{article.subtitle}}
-              </h3>
-            </a>
-            <p class="post-meta">Posted by
-              {{article.author}}
-              on {{article.date}}</p>
-          </div>
-          <hr>
-          {% endfor%}
+<h1>Welcome to Blogz</h1>
+<hr>
+{% for user in users %}
+<div>
+    <ul>
+        <li>{{user.username}}</li>
+    </ul>
            
-        </div>
-      </div>
-    </div>
+</div>
+<br>
+{% endfor%}
 
-    <hr>
-
-    <!-- Footer -->
-    <footer>
-      <div class="container">
-        <div class="row">
-          <div class="col-lg-8 col-md-10 mx-auto">
-            
-            <p class="copyright text-muted">Copyright &copy; Lekecia Entrot 2017</p>
-          </div>
-        </div>
-      </div>
-    </footer>
-    
 {% endblock %}
-  

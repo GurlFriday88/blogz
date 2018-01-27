@@ -1,16 +1,17 @@
-from flask import Flask, request, request, render_template, redirect, url_for, flash
+from flask import Flask, request, request, render_template, redirect, session
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+
 
 app = Flask(__name__)
 app.config['DEBUG'] = True
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://blogz:password@localhost:8889/blogz'
 app.config['SQLALCHEMY_ECHO'] = True
 db = SQLAlchemy(app)
+app.secret_key = 'Cdqm7kZt3c4d'
+
 
 #database model for blog posts
-
-
 class Blog(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
@@ -27,22 +28,20 @@ class Blog(db.Model):
         self.content = content
         self.owner = owner
 
-class User(db.Model): #database model for users
 
-    id= db.Column(db.Integer, primary_key = True)
-    username = db.Column(db.String(50))
-    email = db.Column(db.String(120), unique = True)
+class User(db.Model):  # database model for users
+
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(120))
-    owner_post = db.relationship('Blog', backref = 'owner')
+    owner_blog = db.relationship('Blog', backref='owner')
 
     def __init__(self, username, email, password):
         self.username = username
-        self.email = email
         self.password = password
 
-
+#function to validate input and length 
 def validate(form_input):
-    #check for presence of input
     form_value = form_input
     error = ''
     if not form_input:
@@ -55,114 +54,122 @@ def validate(form_input):
         error = "Me no likey {name} with spaces"
     return error
 
-#routes
-
-@app.route('/') #route or home page displaying all posts
+@app.route('/index')  # route or home page displaying all users
 def index():
-    current_posts = Blog.query.order_by(Blog.id.desc()).all()
-    return render_template('index.html', current_posts=current_posts)
+    users = User.query.order_by(User.username.desc()).all()
+    return render_template('index.html', users = users)
 
 
-@app.route('/register', methods=['GET', 'POST'])  # route to registration page
-def register():
+@app.route('/signup', methods=['GET', 'POST'])  # route to registration page
+def signup():
+    # if user submits form pull input from form
     if request.method == 'POST':
-        #if user submits form pull input from form 
-        email = request.form['email']
-        username = request.form['username' ]
-        password = request.form['password' ]
+        username = request.form['username']
+        password = request.form['password']
         verify_password = request.form['verify_password']
-        #TODO validate input
+
         user_name_error = ""
         password_error = ""
         verify_pass_error = ""
-        email_error = ""
+        compare_pass_error = ""
         # #checks for validation of username, password, and verify password
         user_name_error = validate(username).format(name="Username")
         password_error = validate(password).format(name="Password")
         verify_pass_error = validate(verify_password).format(name="Verify Password")
-        email_error = validate(email).format(name="Email") 
-        
+
         # #compare password to verify password
         if verify_password not in password:
-            #TODO flash error compare_pass_error = "NONE SHALL PASS!...Without matching passwords"
-            
-        #check email for @ and . symbols
-        if not re.search(r"([a-z]+[@]+[a-z]+[.]+[a-z])", email):
-            #TODO flash email_error = "Can I get an actual email address?" 
-    
+            compare_pass_error = "NONE SHALL PASS!...Without matching passwords"
+
         #checks for empty error messages if there are no errors validation passes can move on to checking db for user
         if not (user_name_error or
                 password_error or
                 verify_pass_error or
                 compare_pass_error or
-                email_error
                 ):
-        #Check if user exists in db
-            existing_user= User.query.filter_by(email=email).first()
-            if not existing_user: #make a new user if not existing
-                new_user= User(username, email, password)
+            #Check if user exists in db
+            existing_user = User.query.filter_by(username=username).first()
+            if not existing_user:  # make a new user if not existing
+                new_user = User(username, password)
                 db.session.add(new_user)
                 db.commit()
-                #TODO create session to remember user & flash to welcome user to index
-                return redirect('/')
+                session['username'] = username
+                return redirect('newpost')
             else:
-                #TODO tell user they already exist in db
-                pass
-        return render_template('register.html',
-                               username_error=user_name_error,
-                               password_error=password_error,
-                               verify_pass_error=verify_pass_error,
-                               compare_pass_error=compare_pass_error,
-                               email_error=email_error,
-                               user_name=user_name,
-                               )
-           
-    return render_template('register.html') #TODO make flashes for all error messages
+                # flash('User already exists, please log in', 'error')
+                return redirect('login')
+        return render_template('signup.html',
+                                username_error=user_name_error,
+                                password_error=password_error,
+                                verify_pass_error=verify_pass_error,
+                                compare_pass_error=compare_pass_error,
+                                username=username,
+                                )
+        
+    return render_template('signup.html')
 
 
-@app.route('login', methods= ['GET', 'POST'])  # route or home page displaying all posts
+@app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        #if the user logs in check db for presence of email
-        email = request.form['email']
+        #if the user logs in check db for presence of username
+        username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(email=email).first()
+        user = User.query.filter_by(username = username).first()
+
         if user and user.password == password:
-            return redirect('/')
+            session['username'] = username
+            return redirect('newpost')
         else:
-            #TODO explain why log in failed
-            pass
+            return render_template('login.html')
     return render_template('login.html')
 
 
 
-# @app.route('/post/<int:new_post_id>') 
+@app.route('/logout')
+def logout():
+    if request.method == 'POST':
+        return redirect('blog')
+
+
+@app.route('/singlepost/<int:new_post_id>')
 # #route to show individual post filtered by that particuar post's id
-# def current_post(new_post_id):
-#     new_post = Blog.query.filter_by(id=new_post_id).first_or_404()
-#     return render_template('post.html', new_post=new_post)
+def current_post(new_post_id):
+    new_post = Blog.query.filter_by(id=new_post_id).first_or_404()
+    return render_template('post.html', new_post=new_post)
 
-# #processes post form and adds entry to database
 
-# @app.route('/add_post', methods=['GET', 'POST'])
-# def add_post():
-#     if request.method == 'POST':
-#         new_title = request.form['title']
-#         if not new_title:
-#             error = "Please enter a title." #TODO make flash for error
-#             return render_template('add_post.html', error=error)
+@app.route('/blog')
+def all_posts():
+    blog = Blog.query.order_by(Blog.id.desc()).all()
+    return render_template('blog.html', blog=blog)
+    
 
-#         new_subtitle = request.form['subtitle']
-#         new_author = request.form['author']
-#         new_content = request.form['content']
-#         date = datetime.now()
-#         new_post = Blog(new_title, new_subtitle, new_author, date, new_content)
-#         db.session.add(new_post)
-#         db.session.commit()
-#         return redirect(url_for(''))
+@app.route('/newpost', methods=['GET', 'POST'])
+def add_post():
+    if request.method == 'POST':
+        new_title = request.form['title']
+        if not new_title:
+            error = "Please enter a title."
+            return render_template('newpost.html', error=error)
 
-#     return render_template('add_post.html')
+        new_subtitle = request.form['subtitle']
+        new_author = request.form['author']
+        new_content = request.form['content']
+        date = datetime.now()
+        new_post = Blog(new_title, new_subtitle, new_author, date, new_content)
+        db.session.add(new_post)
+        db.session.commit()
+        return redirect('') #TODO have this direct to the single view page
+
+    return render_template('add_post.html')
+
 
 
 if __name__ == '__main__':
     app.run()
+
+#TODO drop tables and relink DB to app
+#TODO test app for db functionality 
+#TODO test for validation 
+#TODO remake git repo and link to local repo

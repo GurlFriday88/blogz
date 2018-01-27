@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Blogz</title>
+</head>
+<body>
+    <nav>
+        <ul>
+            <li>
+                <a href="{{url_for('index')}}" target="_blank">
+                    Home
+                </a>
+            </li>
+            <li>
+                <a href="{{url_for('allpost')}}" target="_blank">
+                    All Posts
+                </a>
+            </li>
+            <li>
+                <a href="{{url_for('newpost')}}" target="_blank">
+                    New Post
+                </a>
+            </li>
+            <li>
+                <a href="{{url_for('login')}}" target="_blank">
+                    Login
+                </a>
+            </li>
+            <li>
+                <a href="{{url_for('logout')}}" target="_blank">
+                    Logout
+                </a>
+            </li>
+        </ul>
+    </nav>
+    {% block content %}
+    {% endblock %}
+
+    
+</body>
+</html>

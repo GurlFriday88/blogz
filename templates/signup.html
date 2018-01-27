@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Register</h1>
+<h2>Already a User? <a href="{{url_for('login')}}"> Log In!</a></h2>
+
+
+<form action='/signup' , method="POST">
+
+    <label for='username'>Username</label>
+    <input type='text' name='username' value='{{username}}'>
+    <span>{{username_error}}</span>
+
+    <label for='password'>Password</label>
+    <input type='password' name='password'>
+    <span>{{password_error}}</span>
+
+    <label for='verify_password'>Verify Password</label>
+    <input type='password' name='verify_password'>
+    <span>{{verify_pass_error}}</span>
+    <span>{{compare_pass_error}}</span>
+    <input type="submit" value="Submit">
+</form>
+{% endblock %}
