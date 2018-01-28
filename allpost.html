@@ -1,19 +1,20 @@
-{% extends "base.html" %} 
+{% extends "base.html" %}
 {% block content %}
 
 <div>
-    {% for article in {{submitted_post}} %}
+    {% for article in {{current_posts}} %}
     <div class="post-preview">
 
         <h2 class="post-title"><a href="{{ url_for('singlepost', post_id=article.id ) }}">{{article.title}}</a></h2>
         <h3 class="post-subtitle">
             {{article.subtitle}}
         </h3>
+        </a>
         <p class="post-meta">Posted by
             <a href="/userpost">{{article.owner.username}}</a>{{article.date.strftime('%B %d, %Y')}}</p>
     </div>
     <hr>
 </div>
-<hr>
+<hr> 
     {% endfor%} 
- {% endblock %}
+{% endblock %}

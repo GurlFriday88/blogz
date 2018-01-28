@@ -1,3 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
+
+<div>
+     {% for article in {{user_post}} %}
+    <h1>{{article.title}}</h1>
+    <h2 class="subheading">{{article.subtitle}}</h2>
+    <span class="meta">Posted by {{article.owner.username}} on {{article.date.strftime('%B %d, %Y')}}</span>
+</div>
+<div>
+    <p>{{article.content|safe}}</p>
+
+     {% endfor%}
+</div>
 {% endblock %}

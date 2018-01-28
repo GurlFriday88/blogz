@@ -21,11 +21,12 @@ class Blog(db.Model):
     content = db.Column(db.Text)
     owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(self, title, subtitle, date, content):
+    def __init__(self, title, subtitle, date, content, owner):
         self.title = title
         self.subtitle = subtitle
         self.date = date
         self.content = content
+        self.owner = owner
 
 
 class User(db.Model):  # database model for users
@@ -33,11 +34,18 @@ class User(db.Model):  # database model for users
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(120))
-    owner_blog = db.relationship('Blog', backref='owner')
+    blogs = db.relationship('Blog', backref='owner')
 
     def __init__(self, username, password):
         self.username = username
         self.password = password
+
+
+@app.before_request
+def require_login():
+    allowed_routes = ['login', 'signup', 'index']
+    if request.endpoint not in allowed_routes and 'username' not in session:
+        return redirect('/login')
 
 #function to validate input and length 
 def validate(form_input):
@@ -125,26 +133,35 @@ def login():
 
 
 
-@app.route('/logout')
+@app.route('/logout', methods=['GET'])
 def logout():
+    del session['username']
     return redirect('index')
 
 
-@app.route('/singlepost/<int:new_post_id>')
-# #route to show individual post filtered by that particuar post's id
-def current_post(new_post_id):
-    new_post = Blog.query.filter_by(id=new_post_id).first_or_404()
-    return render_template('singleuser.html', new_post=new_post)
+@app.route('/singlepost/<int:post_id>')
+ #route to show individual post filtered by that particuar post's id
+def current_post(post_id):
+    user_post = Blog.query.filter_by(id= post_id).first_or_404()
+    return render_template('singleuser.html', user_post=user_post)
 
 
-@app.route('/blog')
-def all_posts():
-    blog = Blog.query.order_by(Blog.id.desc()).all()
-    return render_template('blog.html', blog=blog)
-    
+@app.route('/userpost')
+def show_upost():
+    owner = User.query.filter_by(username=session['username']).first()
+    submitted_post = Blog.query.filter_by(owner=owner).all()
+    return render_template('blog.html', submitted_post=submitted_post)
+
+
+@app.route('/everyone')
+def show_allpost():
+    current_posts = Blog.query.order_by(Blog.id.desc()).all()
+    return render_template('allpost.html', current_posts=current_posts)
+
 
 @app.route('/newpost', methods=['GET', 'POST'])
 def newpost():
+    owner = User.query.filter_by(username=session['username']).first()
     if request.method == 'POST':
         new_title = request.form['title']
         if not new_title:
@@ -154,10 +171,11 @@ def newpost():
         new_subtitle = request.form['subtitle']
         new_content = request.form['content']
         date = datetime.now()
-        new_post = Blog(new_title, new_subtitle, date, new_content)
+        new_post = Blog(new_title, new_subtitle, date, new_content, owner)
         db.session.add(new_post)
         db.session.commit()
-        return redirect('index') #TODO have this direct to the single view page
+        # TODO have this direct to the single view page
+        return redirect('userpost')
 
     return render_template('newpost.html')
 
@@ -169,7 +187,7 @@ if __name__ == '__main__':
  
 
 
-#TODO Fix logout and test for functionality
+#TODO get funtionality for showing indiv posts by id
 #TODO test for validation 
-#TODO add sessioning
 #TODO add flashing
+#TODO clean up css and html
