@@ -2,15 +2,15 @@
 {% block content %}
 
 <div>
-    {% for article in {{submitted_post}} %}
+    {% for article in submitted_post %}
     <div class="post-preview">
 
-        <h2 class="post-title"><a href="{{ url_for('singlepost', post_id=article.id ) }}">{{article.title}}</a></h2>
+        <h2 class="post-title"><a href="/singlepost?id={{article.id}}">{{article.title}}</a></h2>
         <h3 class="post-subtitle">
             {{article.subtitle}}
         </h3>
         <p class="post-meta">Posted by
-            <a href="/userpost">{{article.owner.username}}</a>{{article.date.strftime('%B %d, %Y')}}</p>
+            <a href="/userpost">{{article.owner.username}}</a>{{article.date.strftime('%B %d, %Y')}}</a></p>
     </div>
     <hr>
 </div>

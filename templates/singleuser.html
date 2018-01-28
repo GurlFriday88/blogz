@@ -2,14 +2,14 @@
 {% block content %}
 
 <div>
-     {% for article in {{user_post}} %}
-    <h1>{{article.title}}</h1>
-    <h2 class="subheading">{{article.subtitle}}</h2>
-    <span class="meta">Posted by {{article.owner.username}} on {{article.date.strftime('%B %d, %Y')}}</span>
+     
+    <h1>{{new_post.title}}</h1>
+    <h2 class="subheading">{{new_post.subtitle}}</h2>
+    <p class="post-meta">Posted by
+        <a href="/userpost">{{new_post.owner.username}}</a>{{new_post.date.strftime('%B %d, %Y')}}</a></p>
 </div>
 <div>
-    <p>{{article.content|safe}}</p>
+    <p>{{new_post.content}}</p>
 
-     {% endfor%}
 </div>
 {% endblock %}

@@ -1,4 +1,4 @@
-from flask import Flask, request, request, render_template, redirect, session
+from flask import Flask, request, request, render_template, redirect, session, url_for, flash
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
@@ -43,9 +43,9 @@ class User(db.Model):  # database model for users
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup', 'index']
+    allowed_routes = ['everyone', 'login', 'signup', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
-        return redirect('/login')
+        return redirect('login')
 
 #function to validate input and length 
 def validate(form_input):
@@ -103,7 +103,7 @@ def signup():
                 session['username'] = username
                 return redirect('newpost')
             else:
-                # flash('User already exists, please log in', 'error')
+                flash('User already exists, please log in', 'error')
                 return redirect('login')
         return render_template('signup.html',
                                 username_error=user_name_error,
@@ -122,28 +122,32 @@ def login():
         #if the user logs in check db for presence of username
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username = username).first()
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            flash('Username does not exist', 'error')
+            return render_template('login.html')
+        if user.password != password:
+            flash('Password is incorrect', 'error')
+            return render_template('login.html')
 
         if user and user.password == password:
             session['username'] = username
             return redirect('newpost')
-        else:
-            return render_template('login.html')
     return render_template('login.html')
 
 
-
-@app.route('/logout', methods=['GET'])
+@app.route('/logout')
 def logout():
     del session['username']
-    return redirect('index')
+    flash('You were successfully logged out', 'success')
+    return redirect('index', 'success')
 
 
-@app.route('/singlepost/<int:post_id>')
- #route to show individual post filtered by that particuar post's id
-def current_post(post_id):
-    user_post = Blog.query.filter_by(id= post_id).first_or_404()
-    return render_template('singleuser.html', user_post=user_post)
+@app.route('/singlepost')
+def post():
+    post_id= request.args.get('id')
+    new_post = Blog.query.filter_by(id= post_id).first_or_404()
+    return render_template('singleuser.html', new_post=new_post)
 
 
 @app.route('/userpost')
@@ -175,7 +179,7 @@ def newpost():
         db.session.add(new_post)
         db.session.commit()
         # TODO have this direct to the single view page
-        return redirect('userpost')
+        return redirect('singlepost')
 
     return render_template('newpost.html')
 
@@ -184,10 +188,5 @@ def newpost():
 if __name__ == '__main__':
     app.run()
 
- 
 
-
-#TODO get funtionality for showing indiv posts by id
-#TODO test for validation 
-#TODO add flashing
 #TODO clean up css and html
