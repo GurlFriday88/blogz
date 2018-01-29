@@ -11,6 +11,8 @@ db = SQLAlchemy(app)
 app.secret_key = 'Cdqm7kZt3c4d'
 
 
+
+
 #database model for blog posts
 class Blog(db.Model):
 
@@ -43,7 +45,7 @@ class User(db.Model):  # database model for users
 
 @app.before_request
 def require_login():
-    allowed_routes = ['everyone', 'login', 'signup', 'index']
+    allowed_routes = ['show_allpost', 'login', 'signup', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('login')
 
@@ -61,7 +63,7 @@ def validate(form_input):
         error = "Me no likey {name} with spaces"
     return error
 
-@app.route('/index')  # route or home page displaying all users
+@app.route('/')  # route or home page displaying all users
 def index():
     users = User.query.order_by(User.username.desc()).all()
     return render_template('index.html', users = users)
@@ -140,14 +142,18 @@ def login():
 def logout():
     del session['username']
     flash('You were successfully logged out', 'success')
-    return redirect('index', 'success')
+    return redirect('/everyone')
 
 
 @app.route('/singlepost')
 def post():
     post_id= request.args.get('id')
-    new_post = Blog.query.filter_by(id= post_id).first_or_404()
-    return render_template('singleuser.html', new_post=new_post)
+    if post_id:
+        new_post = Blog.query.filter_by(id= post_id).first_or_404()
+        return render_template('singleuser.html', new_post=new_post)
+    else:
+        return redirect('/everyone')
+
 
 
 @app.route('/userpost')
@@ -178,8 +184,8 @@ def newpost():
         new_post = Blog(new_title, new_subtitle, date, new_content, owner)
         db.session.add(new_post)
         db.session.commit()
-        # TODO have this direct to the single view page
-        return redirect('singlepost')
+        post_id= new_post.id
+        return redirect('/singlepost?id={}'.format(post_id))
 
     return render_template('newpost.html')
 
