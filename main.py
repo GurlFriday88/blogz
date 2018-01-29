@@ -159,9 +159,16 @@ def post():
 
 @app.route('/userpost')
 def show_upost():
+    selected_user= request.args.get('username')
     owner = User.query.filter_by(username=session['username']).first()
-    submitted_post = Blog.query.filter_by(owner=owner).all()
-    return render_template('blog.html', submitted_post=submitted_post)
+    if owner == selected_user:
+        submitted_post = Blog.query.filter_by(owner=owner).all()
+        return render_template('blog.html', submitted_post=submitted_post)
+    else:
+        submitted_post = Blog.query.filter_by(owner=selected_user).all()
+        return render_template('blog.html', submitted_post=submitted_post)
+
+
 
 
 @app.route('/everyone')
