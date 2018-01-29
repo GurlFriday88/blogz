@@ -1,31 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
-    <link href="{{ url_for('static', filename='lux.min.css') }}" rel="stylesheet" />
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Blogz</title>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Blogs</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="{{ url_for('static', filename='lux.min.css') }}" />
     
 </head>
 <body>
     {% include 'includes/_navbar.html' %}
-    
-    {% with messages = get_flashed_messages(with_categories=true) %} 
+    {% with messages= get_flashed_messages(with_categories=True) %}
     {% if messages %}
-    <ul class=flashes>
+    <ul class='flashes'>
         {% for category, message in messages %}
-        <li class="{{ category }}">{{ message }}</li>
+        <li class='{{category}}'>{{message}}</li>
         {% endfor %}
     </ul>
-    {% endif %} 
-    {% endwith %}
-    <div class="container">
-        {% block content %} 
+    {% endif %}
+    {% endwith%}
+    <div class='container'>
+        {% block content %}
+
         {% endblock %}
     </div>
-
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js">
-    </script>    
+    
 </body>
 </html>

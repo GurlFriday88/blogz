@@ -1,26 +1,19 @@
-{% extends "base.html" %} 
+{% extends 'base.html' %}
 {% block content %}
-<div class="jumbotron text-center">
+<div class='jumbotron text-center'>
     <h1>Welcome to Blogz</h1>
-    <blockquote class="blockquote text-center">
-        <p class="mb-0">The world always seems brighter when you've just made something that wasn't there before.</p>
-        <footer class="blockquote-footer">
-            <cite title="Source Title">Neil Gaiman</cite>
+    <blockquote class='blockquote text-center'>
+        <p class='mb-0'>The world always seems brighter when you've just made something that wasn't there before.</p>
+        <footer class='blockquote-footer'>
+            <cite title='Source Title'>Neil Gaiman</cite>
         </footer>
     </blockquote>
-
 </div>
-
-<div class="container">
+<div class='container'>
 {% for user in users %}
-<div class="list-group">
-
-    <a href="/userpost" class="list-group-item list-group-item-action">{{user.username}}
-    </a>
-
+<div class='list-group'>
+    <a href="/userpost?username={{user.username}}" class='list-group-itemlist-group-item-action'>{{user.username}}</a>
 </div>
-{% endfor%}
+{% endfor %}
 </div>
-
 {% endblock %}
-

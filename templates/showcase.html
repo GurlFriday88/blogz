@@ -1,0 +1,15 @@
+{% extends 'base.html' %} 
+{% block content %}
+<div>
+    <h1>{{new_post.title}}</h1>
+    <h3>{{new_post.subtitle}}</h3>
+    <p class="post-meta">
+        <small class="text-muted">Posted by
+            <a href="/userpost?username={{new_post.owner.username}}">{{new_post.owner.username}}
+            </a>{{new_post.date.strftime('%B %d, %Y') }}
+        </small>
+    </p>
+    <p>{{new_post.content}}</p>
+</div>
+
+{% endblock %}

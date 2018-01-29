@@ -152,7 +152,7 @@ def post():
     post_id= request.args.get('id')
     if post_id:
         new_post = Blog.query.filter_by(id= post_id).first_or_404()
-        return render_template('singleuser.html', new_post=new_post)
+        return render_template('showcase.html', new_post=new_post)
     else:
         return redirect('/everyone')
 
@@ -160,13 +160,17 @@ def post():
 @app.route('/userpost')
 def show_upost():
     selected_user= request.args.get('username')
+    is_user= User.query.filter_by(username=selected_user).first()
     owner = User.query.filter_by(username=session['username']).first()
-    if owner == selected_user:
-        submitted_post = Blog.query.filter_by(owner=owner).all()
-        return render_template('blog.html', submitted_post=submitted_post)
-    else:
-        submitted_post = Blog.query.filter_by(owner=selected_user).all()
-        return render_template('blog.html', submitted_post=submitted_post)
+    if is_user:
+        submitted_post = Blog.query.filter_by(owner=is_user).all()
+        return render_template('userpost.html', submitted_post=submitted_post)
+
+    submitted_post = Blog.query.filter_by(owner=owner).all()
+    return render_template('userpost.html', submitted_post=submitted_post)
+
+
+    
 
 
 

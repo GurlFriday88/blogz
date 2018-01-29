@@ -1,4 +1,4 @@
-{% extends "base.html" %}
+{% extends 'base.html' %} 
 {% block content %}
 
 <form method="POST" action="/newpost">
@@ -6,13 +6,13 @@
         <legend>Make A Post</legend>
         <div class="form-group">
             <label for="title">Title</label>
-            <input type="text" name="title" class="form-control" id="title" placeholder="Title">
+            <input type="text" name="title" class="form-control" id="title">
             <small id="title-help" class="form-text text-muted">Don't forget to add a title.</small>
             <div class="invalid-feedback">{{error}}</div>
         </div>
         <div class="form-group">
             <label for="subtitle">Subitle</label>
-            <input type="text" name="subtitle" class="form-control" id="subtitle"  placeholder="Subtitle">
+            <input type="text" name="subtitle" class="form-control" id="subtitle">
         </div>
 
         <div class="form-group">
@@ -26,5 +26,3 @@
 
 
 {% endblock %}
-
-

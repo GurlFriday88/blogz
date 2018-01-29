@@ -1,21 +1,18 @@
-{% extends "base.html" %}
-{% block content %}
+{% extends 'base.html' %} 
+{% block content %} 
+{% for article in current_posts %}
 
-
-    {% for article in current_posts %}
-    
-    <a href="/singlepost?id={{article.id}}">
+<a href="/singlepost?id={{article.id}}">
     <h2 class="post-title">{{article.title}}</h2>
-    </a>
-    <h4 class="post-subtitle">
-        {{article.subtitle}}
-    </h4>
-    
-    <p class="post-meta">
-        <small class="text-muted">Posted by
-            <a href="/userpost">{{ article.owner.username }}</a> {{ article.date.strftime('%B %d, %Y') }}</small>
-    </p>
-    
-    {% endfor %} 
-{% endblock %}
+</a>
+<h4 class="post-subtitle">
+    {{article.subtitle}}
+</h4>
 
+<p class="post-meta">
+    <small class="text-muted">Posted by
+        <a href="/userpost?username={{article.owner.username}}">{{ article.owner.username }}</a> {{ article.date.strftime('%B %d, %Y') }}</small>
+</p>
+
+{% endfor %} 
+{% endblock %}
