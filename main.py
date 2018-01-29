@@ -81,10 +81,13 @@ def signup():
         password_error = ""
         verify_pass_error = ""
         compare_pass_error = ""
+        error = "is-invalid"
+
         # #checks for validation of username, password, and verify password
         user_name_error = validate(username).format(name="Username")
         password_error = validate(password).format(name="Password")
-        verify_pass_error = validate(verify_password).format(name="Verify Password")
+        verify_pass_error = validate(
+            verify_password).format(name="Verify Password")
 
         # #compare password to verify password
         if verify_password not in password:
@@ -105,16 +108,15 @@ def signup():
                 session['username'] = username
                 return redirect('newpost')
             else:
-                flash('User already exists, please log in', 'error')
+                flash('User already exists, please log in', 'text-danger')
                 return redirect('login')
         return render_template('signup.html',
-                                username_error=user_name_error,
-                                password_error=password_error,
-                                verify_pass_error=verify_pass_error,
-                                compare_pass_error=compare_pass_error,
-                                username=username,
-                                )
-        
+                               username_error=user_name_error,
+                               password_error=password_error,
+                               verify_pass_error=verify_pass_error,
+                               compare_pass_error=compare_pass_error,
+                               username=username, error=error
+                               )
     return render_template('signup.html')
 
 
@@ -126,10 +128,10 @@ def login():
         password = request.form['password']
         user = User.query.filter_by(username=username).first()
         if not user:
-            flash('Username does not exist', 'error')
+            flash('Username does not exist', 'text-danger')
             return render_template('login.html')
         if user.password != password:
-            flash('Password is incorrect', 'error')
+            flash('Password is incorrect', 'text-danger')
             return render_template('login.html')
 
         if user and user.password == password:
@@ -141,7 +143,7 @@ def login():
 @app.route('/logout')
 def logout():
     del session['username']
-    flash('You were successfully logged out', 'success')
+    flash('You were successfully logged out', 'text-success')
     return redirect('/everyone')
 
 
@@ -153,7 +155,6 @@ def post():
         return render_template('singleuser.html', new_post=new_post)
     else:
         return redirect('/everyone')
-
 
 
 @app.route('/userpost')
@@ -195,4 +196,3 @@ if __name__ == '__main__':
     app.run()
 
 
-#TODO clean up css and html

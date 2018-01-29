@@ -1,20 +1,21 @@
 {% extends "base.html" %}
 {% block content %}
 
-<div>
+
     {% for article in current_posts %}
-    <div class="post-preview">
-        <a href="/singlepost?id={{article.id}}">
-        <h2 class="post-title">{{article.title}}</h2>
-        </a>
-        <h3 class="post-subtitle">
-            {{article.subtitle}}
-        </h3>
-        <p class="post-meta">Posted by
-            <a href="/userpost">{{ article.owner.username }}</a> {{ article.date.strftime('%B %d, %Y') }}</p>
-    </div>
-    <hr>
-</div>
-<hr> 
+    
+    <a href="/singlepost?id={{article.id}}">
+    <h2 class="post-title">{{article.title}}</h2>
+    </a>
+    <h4 class="post-subtitle">
+        {{article.subtitle}}
+    </h4>
+    
+    <p class="post-meta">
+        <small class="text-muted">Posted by
+            <a href="/userpost">{{ article.owner.username }}</a> {{ article.date.strftime('%B %d, %Y') }}</small>
+    </p>
+    
     {% endfor %} 
 {% endblock %}
+

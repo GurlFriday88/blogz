@@ -5,19 +5,31 @@
 
 
 <form action='/signup' , method="POST">
+    <div class="form-row">
+        <div class="col-md-4 mb-3">
+            <label for='username'>Username</label>
+            <input type='text' name='username' class="form-control {{error}}" value='{{username}}'>
+            <div class="invalid-feedback">{{username_error}}</div>
 
-    <label for='username'>Username</label>
-    <input type='text' name='username' value='{{username}}'>
-    <span>{{username_error}}</span>
+        </div>
 
-    <label for='password'>Password</label>
-    <input type='password' name='password'>
-    <span>{{password_error}}</span>
+        <div class="col-md-4 mb-3">
+            <label for='password'>Password</label>
+            <input type='password' name='password' class="form-control {{error}}">
+            <div class="invalid-feedback">{{password_error}}</div>
 
-    <label for='verify_password'>Verify Password</label>
-    <input type='password' name='verify_password'>
-    <span>{{verify_pass_error}}</span>
-    <span>{{compare_pass_error}}</span>
-    <input type="submit" value="Submit">
+        </div>
+
+        <div class="col-md-4 mb-3">
+            <label for='verify_password'>Verify Password</label>
+            <input type='password' name='verify_password' class="form-control {{error}}">
+            <div class="invalid-feedback">{{verify_pass_error}}</div>
+            <div class="invalid-feedback">{{compare_pass_error}}</div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" type="submit">Sign Up</button>
 </form>
 {% endblock %}
+
+

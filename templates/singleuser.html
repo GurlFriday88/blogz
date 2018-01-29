@@ -5,8 +5,10 @@
      
     <h1>{{new_post.title}}</h1>
     <h2 class="subheading">{{new_post.subtitle}}</h2>
-    <p class="post-meta">Posted by
-        <a href="/userpost">{{new_post.owner.username}}</a> {{new_post.date.strftime('%B %d, %Y')}}</a></p>
+    <p class="post-meta">
+        <small class="text-muted">Posted by
+            <a href="/userpost">{{ new_post.owner.username }}</a> {{ new_post.date.strftime('%B %d, %Y') }}</small>
+    </p>
 </div>
 <div>
     <p>{{new_post.content}}</p>
