@@ -44,7 +44,7 @@ class User(db.Model):  # database model for users
 
 @app.before_request
 def must_login():
-    require_login = ['newpost', "logout"]
+    require_login = ['newpost']
     if request.endpoint in require_login and 'username' not in session:
         return redirect('login')
 
@@ -161,11 +161,11 @@ def show_upost():
     selected_user= request.args.get('username')
     is_user= User.query.filter_by(username=selected_user).first()
     owner = User.query.filter_by(username=session['username']).first()
-    if is_user:
-        submitted_post = Blog.query.filter_by(owner=is_user).all()
+    if owner:
+        submitted_post = Blog.query.filter_by(owner=owner).all()
         return render_template('userpost.html', submitted_post=submitted_post)
-
-    submitted_post = Blog.query.filter_by(owner=owner).all()
+        
+    submitted_post = Blog.query.filter_by(owner=is_user).all()
     return render_template('userpost.html', submitted_post=submitted_post)
 
 
