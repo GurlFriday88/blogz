@@ -42,11 +42,10 @@ class User(db.Model):  # database model for users
         self.username = username
         self.password = password
 
-
 @app.before_request
-def require_login():
-    allowed_routes = ['show_allpost', 'login', 'signup', 'index']
-    if request.endpoint not in allowed_routes and 'username' not in session:
+def must_login():
+    require_login = ['newpost', "logout"]
+    if request.endpoint in require_login and 'username' not in session:
         return redirect('login')
 
 #function to validate input and length 
